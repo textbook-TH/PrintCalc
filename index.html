@@ -868,19 +868,17 @@
         }
 
         window.onload = async function() {
-            switchTab('public');
-            
-            try {
-                await supabaseClient.auth.signOut();
-            } catch (err) {
-                console.log('Session cleared');
-            }
-            currentUser = null;
-            updateUserUI(false);
+    switchTab('public');
+    
+    // 1. ดึงข้อมูลตารางขึ้นมาแสดงผลทันทีแบบไม่รออย่างอื่น
+    loadTextbooksData();
+    setupActualPriceManualListeners();
 
-            await loadTextbooksData();
-            setupActualPriceManualListeners();
-        };
+    // 2. เช็กสถานะการล็อกอินเดิมเบื้องหลัง (ไม่ต้อง signOut ทิ้งทุกครั้ง)
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    currentUser = session ? session.user : null;
+    updateUserUI(!!currentUser);
+};
 
         function updateUserUI(isLoggedIn) {
             const adminLoginCard = document.getElementById('adminLoginCard');
