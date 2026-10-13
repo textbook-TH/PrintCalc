@@ -1365,20 +1365,23 @@
                         ${actualPublic ? `${Number(actualPublic).toLocaleString()}` : '-'}
                     </td>
                     <td class="py-3 px-3 text-center">
-                        <div class="flex items-center justify-center space-x-1">
-                            <button onclick="downloadPDFById('${escapeJsAttr(book.id)}')" title="ดาวน์โหลด PDF" 
-                                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition flex items-center justify-center">
-                                <i class="fa-solid fa-file-pdf text-xs"></i>
-                            </button>
-                            <button onclick="openFormModalById('${escapeJsAttr(book.id)}')" title="แก้ไข" 
-                                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition flex items-center justify-center">
-                                <i class="fa-solid fa-pen-to-square text-xs"></i>
-                            </button>
-                            <button onclick="confirmDeleteById('${escapeJsAttr(book.id)}')" title="ลบ" 
-                                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition flex items-center justify-center">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
-                        </div>
+                       <div class="flex items-center justify-center space-x-1">
+    <!-- 1. ไอคอนกระดาษ/PDF สีเขียว -->
+    <button onclick="downloadPDFById('${escapeJsAttr(book.id)}')" title="ดาวน์โหลด PDF" 
+            class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-emerald-600 hover:bg-emerald-50 transition flex items-center justify-center">
+        <i class="fa-solid fa-file-pdf text-sm"></i>
+    </button>
+    <!-- 2. ไอคอนดินสอ/แก้ไข สีน้ำเงิน -->
+    <button onclick="openFormModalById('${escapeJsAttr(book.id)}')" title="แก้ไข" 
+            class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-blue-600 hover:bg-blue-50 transition flex items-center justify-center">
+        <i class="fa-solid fa-pen-to-square text-sm"></i>
+    </button>
+    <!-- 3. ไอคอนถังขยะ/ลบ สีแดง -->
+    <button onclick="confirmDeleteById('${escapeJsAttr(book.id)}')" title="ลบ" 
+            class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-rose-600 hover:bg-rose-50 transition flex items-center justify-center">
+        <i class="fa-solid fa-trash-can text-sm"></i>
+    </button>
+</div>
                     </td>
                 `;
                 tbody.appendChild(tr);
