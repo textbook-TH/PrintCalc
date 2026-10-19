@@ -1676,7 +1676,93 @@
             if (actualStudentInput) actualStudentInput.addEventListener('input', markManual);
             if (actualPublicInput) actualPublicInput.addEventListener('input', markManual);
         }
+async function handleFormSubmit(e) {
+            e.preventDefault();
 
+            const btnSave = document.getElementById('btnSaveSubmit');
+            const originalBtnText = btnSave.innerText;
+
+            try {
+                btnSave.disabled = true;
+                btnSave.innerText = 'กำลังบันทึก...';
+
+                const bookId = document.getElementById('formBookId').value;
+                const calcDate = document.getElementById('formCalcDate').value;
+                const title = document.getElementById('formTitle').value.trim();
+                const academicTitle = document.getElementById('formAcademicTitle').value.trim();
+                const author = document.getElementById('formAuthor').value.trim();
+                const department = document.getElementById('formDepartment').value.trim();
+                const bookCode = document.getElementById('formBookCode').value.trim();
+                const kmitlCode = document.getElementById('formKmitlCode').value.trim();
+                const isbn = document.getElementById('formIsbn').value.trim();
+                const status = document.getElementById('formStatus').value;
+                const edition = parseInt(document.getElementById('formEdition').value) || 1;
+                const pages = parseInt(document.getElementById('formPages').value) || 0;
+                const printQuantity = parseInt(document.getElementById('formPrintQuantity').value) || 0;
+                const unitCost = parseFloat(document.getElementById('formUnitCost').value) || 0;
+
+                const productionCost = printQuantity * unitCost;
+                const vatAmount = productionCost * 0.07;
+                const totalCostWithVat = productionCost + vatAmount;
+                const unitCostWithVat = printQuantity > 0 ? (totalCostWithVat / printQuantity) : 0;
+                const wholesaleFaculty = unitCostWithVat > 0 ? Math.ceil((unitCostWithVat * 1.35) / 5) * 5 : 0;
+                const studentPrice = wholesaleFaculty > 0 ? Math.ceil((wholesaleFaculty * 1.20) / 5) * 5 : 0;
+                const externalWholesale = wholesaleFaculty * 1.50;
+                const externalCover = externalWholesale > 0 ? Math.ceil((externalWholesale * 1.40) / 5) * 5 : 0;
+
+                const actualStudentPrice = parseFloat(document.getElementById('formActualStudentPrice').value) || studentPrice;
+                const actualPublicPrice = parseFloat(document.getElementById('formActualPublicPrice').value) || externalCover;
+                const remarks = document.getElementById('formRemarks').value.trim();
+
+                const payload = {
+                    calc_date: calcDate,
+                    title: title,
+                    academic_title: academicTitle,
+                    author: author,
+                    department: department,
+                    book_code: bookCode,
+                    kmitl_code: kmitlCode,
+                    isbn: isbn,
+                    status: status,
+                    edition: edition,
+                    pages: pages,
+                    print_quantity: printQuantity,
+                    unit_cost: unitCost,
+                    production_cost: productionCost,
+                    vat_amount: vatAmount,
+                    total_cost_with_vat: totalCostWithVat,
+                    wholesale_faculty_rounded: wholesaleFaculty,
+                    student_price_rounded: studentPrice,
+                    external_cover_rounded: externalCover,
+                    actual_student_price: actualStudentPrice,
+                    actual_public_price: actualPublicPrice,
+                    remarks: remarks,
+                    updated_at: new Date().toISOString()
+                };
+
+                let error;
+                if (bookId) {
+                    const res = await supabaseClient.from('textbooks').update(payload).eq('id', bookId);
+                    error = res.error;
+                } else {
+                    const res = await supabaseClient.from('textbooks').insert([payload]);
+                    error = res.error;
+                }
+
+                if (error) throw error;
+
+                showToast(bookId ? 'แก้ไขข้อมูลเรียบร้อยแล้ว' : 'เพิ่มรายการใหม่เรียบร้อยแล้ว', 'success');
+                closeModal('modalAdminForm');
+                await loadTextbooksData();
+
+            } catch (err) {
+                console.error('Submit error:', err);
+                showToast('ไม่สามารถบันทึกข้อมูลได้: ' + err.message, 'error');
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerText = originalBtnText;
+            }
+        }       
 function openFormModal(book = null) {
             isManualActualPriceEdit = false;
             const form = document.getElementById('textbookForm');
