@@ -410,8 +410,8 @@
             document.getElementById('pdfSummaryStudentCalc').innerText = formatCurrency(studentPrice) + ' ฿';
             document.getElementById('pdfSummaryPublicCalc').innerText = formatCurrency(extCover) + ' ฿';
 
-            const actualStudent = book.actual_student_price || studentPrice;
-            const actualPublic = book.actual_public_price || extCover;
+          const actualStudent = (book.actual_student_price !== null && book.actual_student_price !== undefined) ? book.actual_student_price : studentPrice;
+            const actualPublic = (book.actual_public_price !== null && book.actual_public_price !== undefined) ? book.actual_public_price : extCover;
             document.getElementById('pdfSummaryStudentActual').innerText = formatCurrency(actualStudent) + ' ฿';
             document.getElementById('pdfSummaryPublicActual').innerText = formatCurrency(actualPublic) + ' ฿';
 
