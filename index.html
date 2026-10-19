@@ -803,8 +803,6 @@
     <script>
         const SUPABASE_URL = 'https://iaqtzbkjpbwrwwgabnzy.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_2qwJoqjcloS9DMv36lN72A_2FQbfFVE';
-        const ALLOWED_ADMINS = ['textbook@kmitl.ac.th', 'suchada.da@kmitl.ac.th'];
-
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let allBooks = [];
@@ -1679,12 +1677,55 @@
             if (actualPublicInput) actualPublicInput.addEventListener('input', markManual);
         }
 
-        function openFormModal(book = null) {
+function openFormModal(book = null) {
+            isManualActualPriceEdit = false;
             const form = document.getElementById('textbookForm');
-            form.reset();
+            if (form) form.reset();
 
-            const todayStr = new Date().toISOString().split('T');
+            if (book) {
+                document.getElementById('formModalTitle').innerText = 'แก้ไขรายการตำราเรียน';
+                document.getElementById('formBookId').value = book.id || '';
+                document.getElementById('formCalcDate').value = book.calc_date || '';
+                document.getElementById('formTitle').value = book.title || '';
+                document.getElementById('formAcademicTitle').value = book.academic_title || '';
+                document.getElementById('formAuthor').value = book.author || '';
+                document.getElementById('formDepartment').value = book.department || '';
+                document.getElementById('formBookCode').value = book.book_code || '';
+                document.getElementById('formKmitlCode').value = book.kmitl_code || '';
+                document.getElementById('formIsbn').value = book.isbn || '';
+                document.getElementById('formStatus').value = book.status || 'ร่าง';
+                document.getElementById('formEdition').value = book.edition || 1;
+                document.getElementById('formPages').value = book.pages || '';
+                document.getElementById('formPrintQuantity').value = book.print_quantity || '';
+                document.getElementById('formUnitCost').value = book.unit_cost || '';
+                document.getElementById('formRemarks').value = book.remarks || '';
+                
+                calculatePricing();
+
+                if (book.actual_student_price !== null && book.actual_student_price !== undefined) {
+                    document.getElementById('formActualStudentPrice').value = book.actual_student_price;
+                    isManualActualPriceEdit = true;
+                }
+                if (book.actual_public_price !== null && book.actual_public_price !== undefined) {
+                    document.getElementById('formActualPublicPrice').value = book.actual_public_price;
+                    isManualActualPriceEdit = true;
+                }
+            } else {
+                document.getElementById('formModalTitle').innerText = 'เพิ่มรายการตำราเรียนใหม่';
+                document.getElementById('formBookId').value = '';
+                const todayStr = new Date().toISOString().split('T')[0];
+                document.getElementById('formCalcDate').value = todayStr;
+                calculatePricing();
+            }
+
+            openModal('modalAdminForm');
         }
+
+        // ตรวจจับสถานะการล็อกอินผ่าน Supabase Auth โดยตรง
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            currentUser = session ? session.user : null;
+            updateUserUI(!!currentUser);
+        });
     </script>
 </body>
 </html>
