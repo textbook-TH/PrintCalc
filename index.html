@@ -1408,7 +1408,7 @@
             showToast('กำลังเตรียมข้อมูลเอกสาร PDF...', 'info');
 
             // เปิด template.html โดยส่ง id ผ่าน Query Parameter และสั่ง print
-            const printWindow = window.open(`template.html?id=${encodeURIComponent(book.id)}`, '_blank');
+            const printWindow = window.open(`CostSheet.html?id=${encodeURIComponent(book.id)}`, '_blank');
             if (printWindow) {
                 printWindow.focus();
             } else {
